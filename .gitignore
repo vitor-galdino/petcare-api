@@ -1,0 +1,4 @@
+.vscode
+* cache *
+db.sqlite3
+venv/
