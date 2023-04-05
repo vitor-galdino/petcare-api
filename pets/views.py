@@ -26,7 +26,7 @@ class PetView(APIView):
 
         for trait_dict in traits:
             trait_obj = Trait.objects.filter(
-                trait_name__iexact=trait_dict['trait_name']
+                name__iexact=trait_dict['name']
             ).first()
 
             if not trait_obj:
@@ -37,3 +37,8 @@ class PetView(APIView):
         serializer = PetSerializer(pet_obj)
 
         return Response(serializer.data, status.HTTP_201_CREATED)
+
+    def get(self, request):
+    
+
+        return Response()
