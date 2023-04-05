@@ -6,4 +6,4 @@ class Trait(models.Model):
     pets = models.ManyToManyField('pets.Pet', related_name='traits')
 
     def __repr__(self) -> str:
-        return f'<[{self.id}] Pet - {self.name}>'
+        return f'<[{self.id}] Trait - {self.name}>'
