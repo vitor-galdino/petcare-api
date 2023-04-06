@@ -61,3 +61,41 @@ class PetDetailView(APIView):
         pet = get_object_or_404(Pet, id=pet_id)
         pet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def patch(self, request, pet_id):
+        pet = get_object_or_404(Pet, id=pet_id)
+        serializer = PetSerializer(data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        group = serializer.validated_data.pop('group', None)
+        traits = serializer.validated_data.pop('traits', None)
+
+        if group:
+            group_obj = Group.objects.filter(
+                scientific_name__iexact=group['scientific_name']
+            ).first()
+
+            if not group_obj:
+                group_obj = Group.objects.create(**group)
+
+            pet.group = group_obj
+
+        if traits:
+            pet.traits.clear()
+            for trait_dict in traits:
+                trait_obj = Trait.objects.filter(
+                    name__iexact=trait_dict['name']
+                ).first()
+
+                if not trait_obj:
+                    trait_obj = Trait.objects.create(**trait_dict)
+                
+                pet.traits.add(trait_obj)
+
+        for key, value in serializer.validated_data.items():
+            setattr(pet, key, value)
+
+        pet.save()
+        serializer = PetSerializer(pet)
+
+        return Response(serializer.data, status.HTTP_200_OK)
