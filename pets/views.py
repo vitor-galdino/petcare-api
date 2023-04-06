@@ -1,5 +1,6 @@
-from rest_framework.views import APIView, Response, status
+from django.shortcuts import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.views import APIView, Response, status
 
 from groups.models import Group
 from traits.models import Trait
@@ -44,3 +45,10 @@ class PetView(APIView, PageNumberPagination):
         serializer = PetSerializer(result_page, many=True)
 
         return self.get_paginated_response(serializer.data)
+
+
+class PetDetailView(APIView):
+    def get(self, request, pet_id):
+        pet = get_object_or_404(Pet, id=pet_id)
+        serializer = PetSerializer(pet)
+        return Response(serializer.data)
